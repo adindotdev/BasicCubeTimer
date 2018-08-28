@@ -37,8 +37,8 @@ class TapTimer {
     }
 
     /**
-     * Taps the timer. Starts the timer if it is not running, else stops the timer and adds the time
-     * to mListOfTimes then resets.
+     * Taps the timer. Starts the timer if it is not running, or else stops the timer and adds the
+     * time to mListOfTimes then resets.
      */
     public void tap() {
         if (!mRunning) {
@@ -66,7 +66,7 @@ class TapTimer {
     }
 
     /**
-     * Gets the last time in mListOfTimes. If the timer is running, update the last time.
+     * Gets the last time in mListOfTimes. Updates the last time if the timer is running.
      *
      * @return the last time.
      */
@@ -91,9 +91,9 @@ class TapTimer {
     }
 
     /**
-     * Gets the last time in mListOfTimes as a String up to 3 decimal places.
+     * Gets the last time in mListOfTimes as a String with 3 decimal places.
      *
-     * @return the formatted last time. If mListOfTimes is empty, return a formatted 0.
+     * @return the formatted last time if mListOfTimes is not empty, or else a formatted 0.
      */
     public String getFormattedTime() {
         if (mListOfTimes.isEmpty()) {
@@ -104,10 +104,10 @@ class TapTimer {
 
 // --Commented out by Inspection START (2018-08-28, 1:46 AM):
 //    /**
-//     * Gets the time at the given index in mListOfTimes as a String up to 3 decimal places.
+//     * Gets the time at the given index in mListOfTimes as a String with 3 decimal places.
 //     *
-//     * @return the formatted time at the index. If mListOfTimes is empty or no such time at
-//     * the index exists, return a formatted 0.
+//     * @return the formatted time at the index if mListOfTimes is not empty and if a time at the
+//     * index exists, or else formatted 0.
 //     */
 //    public String getFormattedTime(int index) {
 //        if (mListOfTimes.isEmpty() || mListOfTimes.size() <= index) {
