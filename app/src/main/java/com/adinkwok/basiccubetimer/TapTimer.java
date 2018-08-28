@@ -20,12 +20,12 @@ package com.adinkwok.basiccubetimer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class TapTimer {
+class TapTimer {
     private boolean mRunning;
     private double mStart;
     private double mEnd;
-    private DecimalFormat mDecimalFormatter;
-    private ArrayList<Double> mListOfTimes;
+    private final DecimalFormat mDecimalFormatter;
+    private final ArrayList<Double> mListOfTimes;
 
     /**
      * Creates a non-running tap timer.
@@ -55,7 +55,7 @@ public class TapTimer {
     /**
      * Resets the timer.
      */
-    public void reset() {
+    private void reset() {
         mRunning = false;
         mStart = 0;
         mEnd = 0;
@@ -70,7 +70,7 @@ public class TapTimer {
      *
      * @return the last time.
      */
-    public double getTime() {
+    private double getTime() {
         if (mRunning) {
             mListOfTimes.set(mListOfTimes.size() - 1, (System.currentTimeMillis() - mStart) / 1000);
         }
@@ -83,7 +83,7 @@ public class TapTimer {
      * @param index the index of mListOfTimes.
      * @return the time at index.
      */
-    public double getTime(int index) {
+    private double getTime(int index) {
         if (index == mListOfTimes.size() - 1) {
             return getTime();
         }
@@ -102,16 +102,18 @@ public class TapTimer {
         return mDecimalFormatter.format(getTime(mListOfTimes.size() - 1));
     }
 
-    /**
-     * Gets the time at the given index in mListOfTimes as a String up to 3 decimal places.
-     *
-     * @return the formatted time at the index. If mListOfTimes is empty or no such time at
-     * the index exists, return a formatted 0.
-     */
-    public String getFormattedTime(int index) {
-        if (mListOfTimes.isEmpty() || mListOfTimes.size() <= index) {
-            return mDecimalFormatter.format(0);
-        }
-        return mDecimalFormatter.format(getTime(index));
-    }
+// --Commented out by Inspection START (2018-08-28, 1:46 AM):
+//    /**
+//     * Gets the time at the given index in mListOfTimes as a String up to 3 decimal places.
+//     *
+//     * @return the formatted time at the index. If mListOfTimes is empty or no such time at
+//     * the index exists, return a formatted 0.
+//     */
+//    public String getFormattedTime(int index) {
+//        if (mListOfTimes.isEmpty() || mListOfTimes.size() <= index) {
+//            return mDecimalFormatter.format(0);
+//        }
+//        return mDecimalFormatter.format(getTime(index));
+//    }
+// --Commented out by Inspection STOP (2018-08-28, 1:46 AM)
 }
