@@ -55,7 +55,7 @@ class TapTimer {
     /**
      * Resets the timer.
      */
-    private void reset() {
+    public void reset() {
         mRunning = false;
         mStart = 0;
         mEnd = 0;

@@ -46,4 +46,11 @@ public class TimerActivity extends AppCompatActivity {
             }
         }, sRefreshRate);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mTapTimer.getRunning()) {
+            mTapTimer.tap();
+        }
+    }
 }
