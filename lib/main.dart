@@ -45,30 +45,60 @@ class BasicCubeTimerHome extends StatefulWidget {
 }
 
 class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
-  static final refreshRate = const Duration(milliseconds: 25);
+  static final refreshDelay = const Duration(milliseconds: 45);
 
-  //double _time = 0.0; TODO actually use this
-  String _formattedTime = "0.000";
   Stopwatch _stopwatch = new Stopwatch();
+  List<double> _listOfTimes = new List();
 
   void _tapTimer() {
     setState(() {
       if (!_stopwatch.isRunning) {
         _stopwatch.reset();
         _stopwatch.start();
-        new Timer.periodic(refreshRate, (Timer t) => setStateIfRunning());
+        new Timer.periodic(refreshDelay, (Timer t) => _setStateIfRunning(t));
       } else {
         _stopwatch.stop();
+        _listOfTimes.add(_stopwatch.elapsedMilliseconds / 1000);
       }
     });
   }
 
-  void setStateIfRunning() {
+  void _setStateIfRunning(Timer t) {
+    setState(() {
+      if (!_stopwatch.isRunning && t.isActive) {
+        t.cancel();
+      }
+    });
+  }
+
+  String _getDisplayTime() {
+    return (_stopwatch.elapsedMilliseconds / 1000).toStringAsFixed(3);
+  }
+
+  Future<bool> _onWillPop() {
     if (_stopwatch.isRunning) {
-      _formattedTime =
-          (_stopwatch.elapsedMilliseconds / 1000).toStringAsFixed(3);
-      setState(() {});
+      _stopwatch.stop();
+      _stopwatch.reset();
+      return new Future(() => false);
     }
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+                title: new Text('Short practice eh'),
+                content: new Text('Do you want to exit?'),
+                actions: <Widget>[
+                  new FlatButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: new Text('Yes'),
+                  ),
+                  new FlatButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: new Text('No'),
+                  ),
+                ],
+              ),
+        ) ??
+        false;
   }
 
   @override
@@ -79,43 +109,46 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return new Scaffold(
-      appBar: new AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
-      ),
-      body: new GestureDetector(
-        onTap: _tapTimer,
-        child: new Scaffold(
-          body: new Center(
-            // Center is a layout widget. It takes a single child and positions
-            // it in the middle of the parent.
-            child: new Column(
-              // Column is also layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit
-              // its children horizontally, and tries to be as tall as its
-              // parent.
-              //
-              // Invoke "debug paint" (press "p" in the console where you ran
-              // "flutter run", or select "Toggle Debug Paint" from the Flutter
-              // tool window in IntelliJ) to see the wireframe for each widget.
-              //
-              // Column has various properties to control how it sizes itself
-              // and how it positions its children. Here we use
-              // mainAxisAlignment to center the children vertically; the main
-              // axis here is the vertical axis because Columns are vertical
-              // (the cross axis would be horizontal).
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new Text(
-                  _formattedTime,
-                  style: Theme.of(context)
-                      .textTheme
-                      .display1
-                      .apply(fontSizeFactor: 1.5),
-                ),
-              ],
+    return new WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
+        appBar: new AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: new Text(widget.title),
+        ),
+        body: new GestureDetector(
+          onTap: _tapTimer,
+          child: new Scaffold(
+            body: new Center(
+              // Center is a layout widget. It takes a single child and positions
+              // it in the middle of the parent.
+              child: new Column(
+                // Column is also layout widget. It takes a list of children and
+                // arranges them vertically. By default, it sizes itself to fit
+                // its children horizontally, and tries to be as tall as its
+                // parent.
+                //
+                // Invoke "debug paint" (press "p" in the console where you ran
+                // "flutter run", or select "Toggle Debug Paint" from the Flutter
+                // tool window in IntelliJ) to see the wireframe for each widget.
+                //
+                // Column has various properties to control how it sizes itself
+                // and how it positions its children. Here we use
+                // mainAxisAlignment to center the children vertically; the main
+                // axis here is the vertical axis because Columns are vertical
+                // (the cross axis would be horizontal).
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text(
+                    _getDisplayTime(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(fontSizeFactor: 1.5),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
