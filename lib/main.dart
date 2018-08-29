@@ -93,7 +93,11 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
             children: <Widget>[
               new Text(
                 '$_counter',
-                style: Theme.of(context).textTheme.display1,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .display1
+                    .apply(fontSizeFactor: 1.5),
               ),
             ],
           ),
