@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(new BasicCubeTimer());
@@ -43,17 +45,30 @@ class BasicCubeTimerHome extends StatefulWidget {
 }
 
 class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
-  int _counter = 0;
+  static final refreshRate = const Duration(milliseconds: 25);
 
-  void _incrementCounter() {
+  //double _time = 0.0; TODO actually use this
+  String _formattedTime = "0.000";
+  Stopwatch _stopwatch = new Stopwatch();
+
+  void _tapTimer() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      if (!_stopwatch.isRunning) {
+        _stopwatch.reset();
+        _stopwatch.start();
+        new Timer.periodic(refreshRate, (Timer t) => setStateIfRunning());
+      } else {
+        _stopwatch.stop();
+      }
     });
+  }
+
+  void setStateIfRunning() {
+    if (_stopwatch.isRunning) {
+      _formattedTime =
+          (_stopwatch.elapsedMilliseconds / 1000).toStringAsFixed(3);
+      setState(() {});
+    }
   }
 
   @override
@@ -71,7 +86,7 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
         title: new Text(widget.title),
       ),
       body: new GestureDetector(
-        onTap: _incrementCounter,
+        onTap: _tapTimer,
         child: new Scaffold(
           body: new Center(
             // Center is a layout widget. It takes a single child and positions it
@@ -93,9 +108,8 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 new Text(
-                  '$_counter',
-                  style: Theme
-                      .of(context)
+                  _formattedTime,
+                  style: Theme.of(context)
                       .textTheme
                       .display1
                       .apply(fontSizeFactor: 1.5),
