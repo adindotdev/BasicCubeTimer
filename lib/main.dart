@@ -45,7 +45,7 @@ class BasicCubeTimerHome extends StatefulWidget {
 }
 
 class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
-  static final refreshDelay = const Duration(milliseconds: 45);
+  static final refreshDelay = const Duration(milliseconds: 25);
 
   Stopwatch _stopwatch = new Stopwatch();
   List<double> _listOfTimes = new List();
@@ -72,6 +72,14 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
   }
 
   String _getDisplayTime() {
+    if (_stopwatch.elapsedMilliseconds >= 60000) {
+      int minutes = _stopwatch.elapsedMilliseconds ~/ 60000;
+      int seconds = _stopwatch.elapsedMilliseconds % (minutes * 60000);
+      if (seconds < 10000) {
+        return "$minutes:0" + (seconds / 1000).toStringAsFixed(3);
+      }
+      return "$minutes:" + (seconds / 1000).toStringAsFixed(3);
+    }
     return (_stopwatch.elapsedMilliseconds / 1000).toStringAsFixed(3);
   }
 
