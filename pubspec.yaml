@@ -1,5 +1,5 @@
 name: basic_cube_timer
-description: A basic timer for timing twisty puzzle solves.
+description: A basic timer for twisty puzzle solves built with the Flutter SDK.
 
 dependencies:
   flutter:
