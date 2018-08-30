@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:core';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -87,6 +89,30 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
         .toStringAsFixed(_useMilliseconds ? 3 : 2);
   }
 
+  String _getLastAvgOfFive() {
+    if (_listOfTimes.length >= 5) {
+      List<double> lastFiveTimes = _listOfTimes
+          .getRange(_listOfTimes.length - 5, _listOfTimes.length)
+          .toList();
+      lastFiveTimes.removeWhere((double) =>
+          double == _listOfTimes.reduce(max) ||
+          double == _listOfTimes.reduce(min));
+      double sumOfLastFiveTimes = 0.0;
+      for (double d in lastFiveTimes) {
+        sumOfLastFiveTimes += d;
+      }
+      return (sumOfLastFiveTimes / 3).toStringAsFixed(_useMilliseconds ? 3 : 2);
+    }
+    return "N/A";
+  }
+
+  String _getLastTime() {
+    if (_listOfTimes.isNotEmpty) {
+      return (_listOfTimes.last).toStringAsFixed(_useMilliseconds ? 3 : 2);
+    }
+    return "N/A";
+  }
+
   Future<bool> _onWillPop() {
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
@@ -97,7 +123,7 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
           context: context,
           builder: (context) => new AlertDialog(
                 title: new Text('Short practice eh'),
-                content: new Text('Do you want to exit?'),
+                content: new Text('Are you really sure you want to exit?'),
                 actions: <Widget>[
                   new FlatButton(
                     onPressed: () => Navigator.of(context).pop(true),
@@ -125,8 +151,8 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
       onWillPop: _onWillPop,
       child: new Scaffold(
         appBar: new AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
+          // Here we take the value from the MyHomePage object that was created
+          // by the App.build method, and use it to set our appbar title.
           title: new Text(widget.title),
         ),
         body: new GestureDetector(
@@ -157,7 +183,14 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
                     style: Theme.of(context)
                         .textTheme
                         .display1
-                        .apply(fontSizeFactor: 1.5),
+                        .apply(fontSizeFactor: 1.25),
+                  ),
+                  new Text(
+                    "Last average of 5: " + _getLastAvgOfFive(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(fontSizeFactor: 0.5),
                   ),
                 ],
               ),
