@@ -107,8 +107,20 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
   }
 
   String _getLastTime() {
+    if (_listOfTimes.length >= 2) {
+      if (_stopwatch.isRunning) {
+        return (_listOfTimes.last).toStringAsFixed(_useMilliseconds ? 3 : 2);
+      } else {
+        return (_listOfTimes[_listOfTimes.length - 2])
+            .toStringAsFixed(_useMilliseconds ? 3 : 2);
+      }
+    }
+    return "N/A";
+  }
+
+  String _getBestTime() {
     if (_listOfTimes.isNotEmpty) {
-      return (_listOfTimes.last).toStringAsFixed(_useMilliseconds ? 3 : 2);
+      return _listOfTimes.reduce(min).toStringAsFixed(_useMilliseconds ? 3 : 2);
     }
     return "N/A";
   }
@@ -122,7 +134,7 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
     return showDialog(
           context: context,
           builder: (context) => new AlertDialog(
-                title: new Text('Short practice eh'),
+                title: new Text('Short practice eh...'),
                 content: new Text('Are you really sure you want to exit?'),
                 actions: <Widget>[
                   new FlatButton(
@@ -184,6 +196,20 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
                         .textTheme
                         .display1
                         .apply(fontSizeFactor: 1.25),
+                  ),
+                  new Text(
+                    "Best time: " + _getBestTime(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(fontSizeFactor: 0.5),
+                  ),
+                  new Text(
+                    "Last time: " + _getLastTime(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(fontSizeFactor: 0.5),
                   ),
                   new Text(
                     "Last average of 5: " + _getLastAvgOfFive(),
