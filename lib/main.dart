@@ -47,7 +47,9 @@ class BasicCubeTimerHome extends StatefulWidget {
 }
 
 class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
-  static final refreshDelay = const Duration(milliseconds: 25);
+  final _displayTimeFontSize = 1.75;
+  final _statsFontSize = 0.5;
+  final _refreshDelay = const Duration(milliseconds: 25);
 
   bool _useMilliseconds = false; //TODO add ability to change
   Stopwatch _stopwatch = new Stopwatch();
@@ -59,7 +61,7 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
       if (!_stopwatch.isRunning) {
         _stopwatch.reset();
         _stopwatch.start();
-        new Timer.periodic(refreshDelay, (Timer t) => _setStateIfRunning(t));
+        new Timer.periodic(_refreshDelay, (Timer t) => _setStateIfRunning(t));
       } else {
         _stopwatch.stop();
         _listOfTimes.add(_stopwatch.elapsedMilliseconds);
@@ -210,35 +212,78 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
                     style: Theme.of(context)
                         .textTheme
                         .display1
-                        .apply(fontSizeFactor: 1.25),
+                        .apply(fontSizeFactor: _displayTimeFontSize),
                   ),
-                  new Text(
-                    "Best time: " + _formatTime(_getBestTime()),
-                    style: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .apply(fontSizeFactor: 0.5),
-                  ),
-                  new Text(
-                    "Last time: " + _formatTime(_getLastTime()),
-                    style: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .apply(fontSizeFactor: 0.5),
-                  ),
-                  new Text(
-                    "Best Ao5: " + _formatTime(_getBestAvgOfFive()),
-                    style: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .apply(fontSizeFactor: 0.5),
-                  ),
-                  new Text(
-                    "Last Ao5: " + _formatTime(_getLastAvgOfFive()),
-                    style: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .apply(fontSizeFactor: 0.5),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new Text(
+                            "Best time:",
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            "Last time:",
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            "Best Ao5:",
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            "Last Ao5:",
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                        ],
+                      ),
+                      new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new Text(
+                            _formatTime(_getBestTime()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            _formatTime(_getLastTime()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            _formatTime(_getBestAvgOfFive()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                          new Text(
+                            _formatTime(_getLastAvgOfFive()),
+                            style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .apply(fontSizeFactor: _statsFontSize),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ],
               ),
