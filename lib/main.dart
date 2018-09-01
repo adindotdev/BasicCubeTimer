@@ -51,7 +51,8 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
 
   bool _useMilliseconds = false; //TODO add ability to change
   Stopwatch _stopwatch = new Stopwatch();
-  List<double> _listOfTimes = new List();
+  List<int> _listOfTimes = new List();
+  List<int> _listOfAvgOfFive = new List();
 
   void _tapTimer() {
     setState(() {
@@ -61,7 +62,10 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
         new Timer.periodic(refreshDelay, (Timer t) => _setStateIfRunning(t));
       } else {
         _stopwatch.stop();
-        _listOfTimes.add(_stopwatch.elapsedMilliseconds / 1000);
+        _listOfTimes.add(_stopwatch.elapsedMilliseconds);
+        if (_getLastAvgOfFive() != null) {
+          _listOfAvgOfFive.add(_getLastAvgOfFive());
+        }
       }
     });
   }
@@ -74,55 +78,66 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
     });
   }
 
+  String _formatTime(int milliseconds) {
+    if (milliseconds != null) {
+      if (milliseconds >= 60000) {
+        int minutes = milliseconds ~/ 60000;
+        int seconds = (milliseconds % (minutes * 60000));
+        if (seconds < 10000) {
+          return "$minutes:0" +
+              (seconds / 1000.0).toStringAsFixed(_useMilliseconds ? 3 : 2);
+        }
+        return "$minutes:" +
+            (seconds / 1000.0).toStringAsFixed(_useMilliseconds ? 3 : 2);
+      }
+      return (milliseconds / 1000.0).toStringAsFixed(_useMilliseconds ? 3 : 2);
+    }
+    return "N/a";
+  }
+
   String _getDisplayTime() {
-    if (_stopwatch.elapsedMilliseconds >= 60000) {
-      int minutes = _stopwatch.elapsedMilliseconds ~/ 60000;
-      int seconds = _stopwatch.elapsedMilliseconds % (minutes * 60000);
-      if (seconds < 10000) {
-        return "$minutes:0" +
-            (seconds / 1000).toStringAsFixed(_useMilliseconds ? 3 : 2);
-      }
-      return "$minutes:" +
-          (seconds / 1000).toStringAsFixed(_useMilliseconds ? 3 : 2);
-    }
-    return (_stopwatch.elapsedMilliseconds / 1000)
-        .toStringAsFixed(_useMilliseconds ? 3 : 2);
+    return _formatTime(_stopwatch.elapsedMilliseconds);
   }
 
-  String _getLastAvgOfFive() {
-    if (_listOfTimes.length >= 5) {
-      List<double> lastFiveTimes = _listOfTimes
-          .getRange(_listOfTimes.length - 5, _listOfTimes.length)
-          .toList();
-      lastFiveTimes.removeWhere((double) =>
-          double == _listOfTimes.reduce(max) ||
-          double == _listOfTimes.reduce(min));
-      double sumOfLastFiveTimes = 0.0;
-      for (double d in lastFiveTimes) {
-        sumOfLastFiveTimes += d;
-      }
-      return (sumOfLastFiveTimes / 3).toStringAsFixed(_useMilliseconds ? 3 : 2);
+  int _getBestTime() {
+    if (_listOfTimes.isNotEmpty) {
+      return _listOfTimes.reduce(min);
     }
-    return "N/A";
+    return null;
   }
 
-  String _getLastTime() {
+  int _getBestAvgOfFive() {
+    if (_listOfAvgOfFive.isNotEmpty) {
+      return _listOfAvgOfFive.reduce(min);
+    }
+    return null;
+  }
+
+  int _getLastTime() {
     if (_listOfTimes.length >= 2) {
       if (_stopwatch.isRunning) {
-        return (_listOfTimes.last).toStringAsFixed(_useMilliseconds ? 3 : 2);
+        return _listOfTimes.last;
       } else {
-        return (_listOfTimes[_listOfTimes.length - 2])
-            .toStringAsFixed(_useMilliseconds ? 3 : 2);
+        return _listOfTimes[_listOfTimes.length - 2];
       }
     }
-    return "N/A";
+    return null;
   }
 
-  String _getBestTime() {
-    if (_listOfTimes.isNotEmpty) {
-      return _listOfTimes.reduce(min).toStringAsFixed(_useMilliseconds ? 3 : 2);
+  int _getLastAvgOfFive() {
+    if (_listOfTimes.length >= 5) {
+      List<int> lastFiveTimes = _listOfTimes
+          .getRange(_listOfTimes.length - 5, _listOfTimes.length)
+          .toList();
+      lastFiveTimes.removeWhere((int) =>
+          int == _listOfTimes.reduce(max) || int == _listOfTimes.reduce(min));
+      int sumOfLastFiveTimes = 0;
+      for (int i in lastFiveTimes) {
+        sumOfLastFiveTimes += i;
+      }
+      return sumOfLastFiveTimes ~/ 3;
     }
-    return "N/A";
+    return null;
   }
 
   Future<bool> _onWillPop() {
@@ -198,21 +213,28 @@ class _BasicCubeTimerState extends State<BasicCubeTimerHome> {
                         .apply(fontSizeFactor: 1.25),
                   ),
                   new Text(
-                    "Best time: " + _getBestTime(),
+                    "Best time: " + _formatTime(_getBestTime()),
                     style: Theme.of(context)
                         .textTheme
                         .display1
                         .apply(fontSizeFactor: 0.5),
                   ),
                   new Text(
-                    "Last time: " + _getLastTime(),
+                    "Last time: " + _formatTime(_getLastTime()),
                     style: Theme.of(context)
                         .textTheme
                         .display1
                         .apply(fontSizeFactor: 0.5),
                   ),
                   new Text(
-                    "Last average of 5: " + _getLastAvgOfFive(),
+                    "Best Ao5: " + _formatTime(_getBestAvgOfFive()),
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(fontSizeFactor: 0.5),
+                  ),
+                  new Text(
+                    "Last Ao5: " + _formatTime(_getLastAvgOfFive()),
                     style: Theme.of(context)
                         .textTheme
                         .display1
